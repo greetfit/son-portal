@@ -38,9 +38,10 @@ class RoutingController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function root(Request $request, $first)
+    public function root(string $any)
     {
-        return view($first);
+        $view = $any; // e.g. 'pages'
+        return $this->renderIfExists($view);
     }
 
     /**
@@ -57,5 +58,15 @@ class RoutingController extends BaseController
     public function thirdLevel(Request $request, $first, $second, $third)
     {
         return view($first . '.' . $second . '.' . $third);
+    }
+
+    protected function renderIfExists(string $view)
+    {
+        if (view()->exists($view)) {
+            return view($view);
+        }
+        // Either redirect to your custom page or abort(404)
+        return redirect()->route('error.404');
+        // return abort(404);
     }
 }

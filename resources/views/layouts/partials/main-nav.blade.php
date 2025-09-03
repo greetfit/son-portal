@@ -2,13 +2,13 @@
      <!-- Sidebar Logo -->
      <div class="logo-box">
           <a href="{{ route('second', ['dashboards', 'analytics'])}}" class="logo-dark">
-               <img src="/images/logo-sm.png" class="logo-sm" alt="logo sm">
-               <img src="/images/logo-dark.png" class="logo-lg" alt="logo dark">
+               <img src="/images/logo-sm-dark.png" class="logo-sm" alt="logo sm">
+               <img src="/images/logo-letter-only-dark.png" class="logo-lg" alt="logo dark">
           </a>
 
           <a href="{{ route('second', ['dashboards', 'analytics'])}}" class="logo-light">
-               <img src="/images/logo-sm.png" class="logo-sm" alt="logo sm">
-               <img src="/images/logo-light.png" class="logo-lg" alt="logo light">
+               <img src="/images/logo-sm-light.png" class="logo-sm" alt="logo sm">
+               <img src="/images/logo-letter-only.png" class="logo-lg" alt="logo light">
           </a>
      </div>
 
