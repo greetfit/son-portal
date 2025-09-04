@@ -12,61 +12,70 @@ class RoutingController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function __construct()
-    {
-        // $this->
-        // middleware('auth')->
-        // except('index');
-    }
+    protected array $rolePermissions = [
+        'super_admin' => [
+            'dashboards.analytics',
+            'dashboards.customer',
+            'users.manage',
+            'agents.list',
+            '',
+        ],
+        'user' => [
+            'dashboards.customer',
+        ],
+    ];
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
-    {
-        if (Auth::user()) {
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    switch ($user->role) {
+        case 'super_admin':
             return redirect('/dashboards/analytics');
-        } else {
-            return redirect('login');
-        }
-    }
 
-    /**
-     * Display a view based on first route param
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function root(string $any)
-    {
-        $view = $any; // e.g. 'pages'
-        return $this->renderIfExists($view);
-    }
+        case 'manager':
+            return redirect('/dashboards/manager'); // 👈 your manager dashboard
 
-    /**
-     * second level route
-     */
+        case 'user':
+            return redirect('/dashboards/customer');
+
+        default:
+            return redirect('/pages/error-403'); // or a generic page
+    }
+}
+
     public function secondLevel(Request $request, $first, $second)
     {
-        return view($first . '.' . $second);
+        $view = "{$first}.{$second}";
+        $this->authorizeView($view);
+
+        return view($view);
     }
 
-    /**
-     * third level route
-     */
     public function thirdLevel(Request $request, $first, $second, $third)
     {
-        return view($first . '.' . $second . '.' . $third);
+        $view = "{$first}.{$second}.{$third}";
+        $this->authorizeView($view);
+
+        return view($view);
     }
 
-    protected function renderIfExists(string $view)
+    protected function authorizeView(string $view)
     {
-        if (view()->exists($view)) {
-            return view($view);
+        $role = auth()->user()->role ?? 'guest';
+
+        // super_admin can see everything
+        if ($role === 'super_admin') {
+            return true;
         }
-        // Either redirect to your custom page or abort(404)
-        return redirect()->route('error.404');
-        // return abort(404);
+
+        // If this view isn’t in their allowed list → block
+        if (!in_array($view, $this->rolePermissions[$role] ?? [])) {
+            abort(403, 'You do not have permission to access this page.');
+        }
     }
 }

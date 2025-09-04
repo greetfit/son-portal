@@ -55,7 +55,7 @@ class User extends Authenticatable
     /** Accepts string|array|... and treats super_admin as “allow all”. */
     public function hasRole(...$roles): bool
     {
-        $roles = Arr::flatten($roles);
-        return $this->isSuperAdmin() || in_array($this->role, $roles, true);
+        $roles = is_array($roles) ? $roles : [$roles];
+        return in_array($this->role, $roles, true);
     }
 }

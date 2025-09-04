@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoutingController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\HotelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,33 +19,28 @@ use App\Http\Controllers\RoutingController;
 require __DIR__.'/auth.php';
 
 // Public 404 page
-Route::get('/pages/error-404', function () {
-    return view('pages.error-404');
-})->name('error.404');
+Route::get('/pages/error-404', fn () => view('pages.error-404'))->name('error.404');
 
-// Auth-only dynamic pages
-Route::middleware(['auth', 'role:super_admin'])->group(function () {
+// All dynamic routes require login
+Route::middleware('auth')->group(function () {
     Route::get('', [RoutingController::class, 'index'])->name('root');
-
     Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
     Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
     Route::get('{any}', [RoutingController::class, 'root'])->name('any');
+    Route::resource('hotels', HotelController::class);
 });
 
 
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('', [RoutingController::class, 'index'])->name('root');
-
-    Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
-    Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
-    Route::get('{any}', [RoutingController::class, 'root'])->name('any');
+Route::middleware(['auth','role:super_admin'])->group(function () {
+    Route::get('/admin/users/create', [UserManagementController::class, 'create'])->name('users.create');
+    Route::post('/admin/users', [UserManagementController::class, 'store'])->name('users.store');
 });
 
-// Last resort (only hits if NO route matched)
-Route::fallback(function () {
-    return redirect()->route('error.404');
-});
 
+// route also work like this
+//  Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
+//     Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
+//     Route::get('{any}', [RoutingController::class, 'root'])->name('any');
 
 
 // example to use the role in single route

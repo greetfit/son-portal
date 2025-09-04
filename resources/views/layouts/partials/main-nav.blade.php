@@ -32,15 +32,18 @@
                     </a>
                     <div class="collapse" id="sidebarDashboards">
                          <ul class="nav sub-navbar-nav">
+                            @if(auth()->user()->hasRole('super_admin'))
                               <li class="sub-nav-item">
                                    <a class="sub-nav-link" href="{{ route('second', ['dashboards', 'analytics'])}}">Analytics</a>
                               </li>
                               <li class="sub-nav-item">
                                    <a class="sub-nav-link" href="{{ route('second', ['dashboards', 'agents'])}}">Agent</a>
                               </li>
+                              @elseif(auth()->user()->hasRole('user'))
                               <li class="sub-nav-item">
                                    <a class="sub-nav-link" href="{{ route('second', ['dashboards', 'customer'])}}">Customer</a>
                               </li>
+                              @endif
                          </ul>
                     </div>
                </li>
