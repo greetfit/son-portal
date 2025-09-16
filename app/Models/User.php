@@ -2,60 +2,48 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Arr;
-
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        // if you decide to add first_name/last_name later, include them here
+            'name','email','password','role_id','is_active',
+
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            // 'is_active' => 'boolean',
         ];
     }
 
-    public function isSuperAdmin(): bool
+    public function role()
     {
-        return $this->role === 'super_admin';
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
-    /** Accepts string|array|... and treats super_admin as “allow all”. */
-    public function hasRole(...$roles): bool
+    // ---- helpers (role by name) ----
+    public function isSuperAdmin(): bool
     {
-        $roles = is_array($roles) ? $roles : [$roles];
-        return in_array($this->role, $roles, true);
+        return ($this->role?->name) === 'super_admin';
+    }
+
+    /**
+     * Check by role NAME(s). Example: hasRole('Admin') or hasRole(['Admin','Staff'])
+     */
+    public function hasRole(string|array ...$roles): bool
+    {
+        $roles = collect($roles)->flatten()->map(fn($r) => (string)$r)->all();
+        return in_array($this->role?->name, $roles, true);
     }
 }

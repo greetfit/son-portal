@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('meal_plans', function (Blueprint $table) {
-            $table->id('meal_plan_id');              // PK
-            $table->string('code', 10)->unique();    // e.g. BB, HB, FB, AI
-            $table->string('description')->nullable();
-            $table->timestamps();
+        Schema::create('meal_plans', function (Blueprint $t) {
+            $t->id();
+            $t->string('name');
+            $t->string('code')->nullable();
+            $t->text('description')->nullable();
+            $t->timestamps();
         });
     }
 

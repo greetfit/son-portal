@@ -8,9 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('amenities', function (Blueprint $table) {
-            $table->id('amenity_id');
+            $table->id();
             $table->string('name');
-            $table->enum('category', ['Basic', 'Facility', 'Premium']);
+            $table->string('category');
+            // $table->enum('category', ['Basic', 'Facility', 'Premium']);
             $table->timestamps();
         });
     }

@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id('category_id');
-            $table->string('name'); // e.g. 3-star, Family, Adventure
-            $table->string('type'); // e.g. Hotel, Tour
-            $table->timestamps();
+        Schema::create('categories', function (Blueprint $t) {
+            $t->id();
+            $t->string('name');        // 3-star, Family, Adventure...
+            $t->string('type');        // Hotel, Tour...
+            $t->timestamps();
         });
     }
 

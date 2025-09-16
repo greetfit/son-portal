@@ -8,7 +8,7 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-lg-7">
-                        <h4 class="text-dark mb-1">Welcome Back , Gaston</h4>
+                        <h4 class="text-dark mb-1"><p>Welcome, {{ auth()->user()->name }}!</p></h4>
                         <p class="fs-14">This is your properties portfolio report</p>
                         <div class="row align-items-center text-center mb-2">
                             <div class="col-lg-7 border-end border-light">

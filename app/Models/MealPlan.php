@@ -2,22 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class MealPlan extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name', 'code', 'description'];
 
-    protected $primaryKey = 'meal_plan_id';
-
-    protected $fillable = [
-        'code',
-        'description',
-    ];
-
-    // If you want the reverse relation from Room:
-    // public function rooms() {
-    //     return $this->hasMany(Room::class, 'meal_plan_id', 'meal_plan_id');
-    // }
+    public function hotels(): BelongsToMany
+    {
+        return $this->belongsToMany(Hotel::class, 'hotel_meal_plan', 'meal_plan_id', 'hotel_id');
+        // ->withTimestamps(); // if you added timestamps on the pivot
+    }
 }
